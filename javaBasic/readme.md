@@ -182,10 +182,14 @@ Hashtable和HashMap它们的性能方面的比较类似 Vector和ArrayList，比
 
 
  # 15 # 
+
 图说设计模式
 http://design-patterns.readthedocs.org/zh_CN/latest/index.html
+如何通俗理解设计模式及其思想?
+https://juejin.im/post/5b3cddb6f265da0f8145c049
 
  # 16 # 
+
 字节流 字符流讲解
 *https://blog.csdn.net/nightcurtis/article/details/51324105  
 https://www.cnblogs.com/runningTurtle/p/7088125.html
