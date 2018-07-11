@@ -1,33 +1,33 @@
-×÷Òµ
+ä½œä¸š
 ------------------
-	1.Ê¹ÓÃMotherBoard,PCI,VideoCard,SoundCard,NetCardÊµÏÖ½Ó¿ÚºÍÀàµÄ¹ØÏµ
-		PCIÊÇ½Ó¿Ú
-		VideoCard,SoundCard,NetCardÊÇÊµÏÖÀà,ÊµÏÖPCI½Ó¿Ú¡£
-		MotherBoardÊÇÀà£¬Ê¹ÓÃPCI×÷Îª·½·¨²ÎÊı¡£
+	1.ä½¿ç”¨MotherBoard,PCI,VideoCard,SoundCard,NetCardå®ç°æ¥å£å’Œç±»çš„å…³ç³»
+		PCIæ˜¯æ¥å£
+		VideoCard,SoundCard,NetCardæ˜¯å®ç°ç±»,å®ç°PCIæ¥å£ã€‚
+		MotherBoardæ˜¯ç±»ï¼Œä½¿ç”¨PCIä½œä¸ºæ–¹æ³•å‚æ•°ã€‚
 
 	2.Girl.boyFriend(TRH)
-		Girl:Å®º¢(class)
-		Tall:¸ß(interface)
-		Rich:¸»(interface)
-		Handsome:Ë§(interface)
-		TRH:¸ß¸»Ë§(interface)
+		Girl:å¥³å­©(class)
+		Tall:é«˜(interface)
+		Rich:å¯Œ(interface)
+		Handsome:å¸…(interface)
+		TRH:é«˜å¯Œå¸…(interface)
 
-	3.¼Ì³ĞÖĞ·½·¨ºÍ×Ö¶ÎË­¿ÉÒÔ¸²¸Ç£¿ÎªÊ²Ã´£¿
+	3.ç»§æ‰¿ä¸­æ–¹æ³•å’Œå­—æ®µè°å¯ä»¥è¦†ç›–ï¼Ÿä¸ºä»€ä¹ˆï¼Ÿ
 		
-	4.Ê²Ã´ÊÇ¶àÌ¬£¿
-		¶ÔÏóµÄ¶àÖÖ×´Ì¬¡£
+	4.ä»€ä¹ˆæ˜¯å¤šæ€ï¼Ÿ
+		å¯¹è±¡çš„å¤šç§çŠ¶æ€ã€‚
 
-Òì³£
+å¼‚å¸¸
 ---------------
 	Exception
 
 	java.lang.Object
-	Throwable:¿ÉÅ×³öµÄ.
-		|----<|---- Error			//´íÎó
-		|----<|---- Exception		//Òì³£ try{}catch(Exception e){}finally{}
+	Throwable:å¯æŠ›å‡ºçš„.
+		|----<|---- Error			//é”™è¯¯
+		|----<|---- Exception		//å¼‚å¸¸ try{}catch(Exception e){}finally{}
 
-	throw		//Å×³öÒì³£µÄÓï¾ä
-	throws		//ÉùÃ÷Å×³öÒì³£Ê±Ê¹ÓÃµÄ¹Ø¼ü×Ö
+	throw		//æŠ›å‡ºå¼‚å¸¸çš„è¯­å¥
+	throws		//å£°æ˜æŠ›å‡ºå¼‚å¸¸æ—¶ä½¿ç”¨çš„å…³é”®å­—
 
 	try{
 		...
@@ -38,8 +38,8 @@
 	finally{
 		...
 	}
-	finallyÊÇÎŞÂÛÈçºÎÒªÖ´ĞĞµÄ´úÂë£¬¿ÉÒÔÔÚ
-	ÀïÃæÓĞ·µ»ØÓï¾ä£¬Èç¹ûfinallyÖĞ·µ»ØÓï¾ä£¬
+	finallyæ˜¯æ— è®ºå¦‚ä½•è¦æ‰§è¡Œçš„ä»£ç ï¼Œå¯ä»¥åœ¨
+	é‡Œé¢æœ‰è¿”å›è¯­å¥ï¼Œå¦‚æœfinallyä¸­è¿”å›è¯­å¥ï¼Œ
 
 	try{
 		...
@@ -51,17 +51,17 @@
 		...
 	}
 
-	1.¶¨ÒåAgeTooSmallException
-	2.¶¨ÒåAgeInvalidException,AgeTooBigExceptionºÍAgeTooSmallException¼Ì³Ğ¸ÃÒì³£
-	3.´¦ÀíÒì³£
+	1.å®šä¹‰AgeTooSmallException
+	2.å®šä¹‰AgeInvalidException,AgeTooBigExceptionå’ŒAgeTooSmallExceptionç»§æ‰¿è¯¥å¼‚å¸¸
+	3.å¤„ç†å¼‚å¸¸
 		AgeTooSmallException
 		AgeTooBigException
 		AgeInvalidException
-	CheckedException			//´ı¼ìÒì³£,·ÇÔËĞĞÊ±Òì³££¬±ØĞëÉùÃ÷Å×³öÓï¾ä¡£
-	RuntimeException			//ÔËĞĞÊ±Òì³£,²»ĞèÒªÔÚ·½·¨ÉÏÉùÃ÷Å×³öÓï¾ä£¬
-								//Ò²²»ĞèÒª±ØĞëÊ¹ÓÃtrycatchÓï¾ä´¦Àí¡£
+	CheckedException			//å¾…æ£€å¼‚å¸¸,éè¿è¡Œæ—¶å¼‚å¸¸ï¼Œå¿…é¡»å£°æ˜æŠ›å‡ºè¯­å¥ã€‚
+	RuntimeException			//è¿è¡Œæ—¶å¼‚å¸¸,ä¸éœ€è¦åœ¨æ–¹æ³•ä¸Šå£°æ˜æŠ›å‡ºè¯­å¥ï¼Œ
+								//ä¹Ÿä¸éœ€è¦å¿…é¡»ä½¿ç”¨trycatchè¯­å¥å¤„ç†ã€‚
 
-	·½·¨¸²¸ÇÊ±£¬Ö»ÄÜÅ×³öÏàÍ¬Òì³£»òÕßÊÇ×ÓÀà£¬·¶Î§¿ÉÒÔËõĞ¡£¬²»ÄÜ·Å´ó¡£
+	æ–¹æ³•è¦†ç›–æ—¶ï¼Œåªèƒ½æŠ›å‡ºç›¸åŒå¼‚å¸¸æˆ–è€…æ˜¯å­ç±»ï¼ŒèŒƒå›´å¯ä»¥ç¼©å°ï¼Œä¸èƒ½æ”¾å¤§ã€‚
 
 jar		//java archive
 ear		//enterprise archive
@@ -71,58 +71,58 @@ tar		//
 
 package
 -----------------
-	ÎÄ¼ş¼Ğ¡£ java.lang.String  java/lang/String.class
-	ÍêÕûÀàÃû : °üÃû.ÀàÃû(È«ÏŞ¶¨Ãû full qualified name)
-	ÃüÃû¹æÔò : www.hotmail.com  com.hotmail.
+	æ–‡ä»¶å¤¹ã€‚ java.lang.String  java/lang/String.class
+	å®Œæ•´ç±»å : åŒ…å.ç±»å(å…¨é™å®šå full qualified name)
+	å‘½åè§„åˆ™ : www.hotmail.com  com.hotmail.
 
-	mkdir classes										//´´½¨Ä¿Â¼
-	javac -d classes PackageDemo1.java					//±àÒëjavaÔ´ÎÄ¼ş,Ö¸¶¨´æ·ÅÄ¿Â¼
-	java -cp classes com.it18zhang.java.PackageDemo1	//ÔËĞĞ³ÌĞò,ÀàÈ«ÏŞ¶¨Ãû
+	mkdir classes										//åˆ›å»ºç›®å½•
+	javac -d classes PackageDemo1.java					//ç¼–è¯‘javaæºæ–‡ä»¶,æŒ‡å®šå­˜æ”¾ç›®å½•
+	java -cp classes com.it18zhang.java.PackageDemo1	//è¿è¡Œç¨‹åº,ç±»å…¨é™å®šå
 
-	Ïà¶ÔÂ·¾¶:
+	ç›¸å¯¹è·¯å¾„:
 	---------------
-		.			//µ±Ç°Â·¾¶
-		..			//ÉÏ¼¶Ä¿Â¼
+		.			//å½“å‰è·¯å¾„
+		..			//ä¸Šçº§ç›®å½•
 		
-	¾ø¶ÔÂ·¾¶:
+	ç»å¯¹è·¯å¾„:
 	---------------
 		D:\classes\..
 
-È¨ÏŞµÄ·ÃÎÊ
+æƒé™çš„è®¿é—®
 -----------------
-	private		//Ë½ÓĞµÄ,²»ÄÜ¼Ì³Ğ
+	private		//ç§æœ‰çš„,ä¸èƒ½ç»§æ‰¿
 	public		//
-	protected	//ÊÜ±£»¤,Õë¶ÔÆäËû°üÖĞµÄ×ÓÀà¡£
-	default		//Ä¬ÈÏ£¬²»Ğ´.²»Í¬°ü²»ÄÜ·ÃÎÊ¡£
+	protected	//å—ä¿æŠ¤,é’ˆå¯¹å…¶ä»–åŒ…ä¸­çš„å­ç±»ã€‚
+	default		//é»˜è®¤ï¼Œä¸å†™.ä¸åŒåŒ…ä¸èƒ½è®¿é—®ã€‚
 
-	Ò»¸öjavaÔ´ÎÄ¼şÖ»ÄÜÓĞÒ»¸öpublicÀà.
+	ä¸€ä¸ªjavaæºæ–‡ä»¶åªèƒ½æœ‰ä¸€ä¸ªpublicç±».
 
-	Èç¹ûÀàÊ¹ÓÃpublicĞŞÊÎ£¬ÎÄ¼şÃû±ØĞëÊÇÀàÃû¡£
+	å¦‚æœç±»ä½¿ç”¨publicä¿®é¥°ï¼Œæ–‡ä»¶åå¿…é¡»æ˜¯ç±»åã€‚
 
 	private
 
 	
-	·¶Î§		public		protected	default		private
+	èŒƒå›´		public		protected	default		private
 ----------------------------------------------------------
-	Í¬Àà
-	Í¬°ü
-	×ÓÀà
-	²»Í¬°ü
+	åŒç±»
+	åŒåŒ…
+	å­ç±»
+	ä¸åŒåŒ…
 
-×÷Òµ
+ä½œä¸š
 ---------------
-	1.Èı½ÇĞÎÀàÒì³£
-		¶¨ÒåÈı½ÇĞÎÀà(Triangle{a,c,b}),
-		ÒªÇó:
-		a.Á½±ßºÍ > µÚÈı±ß ,Å×³öÒì³£
-		b.a|b|c > 0 ,Å×³öÒì³£ 
+	1.ä¸‰è§’å½¢ç±»å¼‚å¸¸
+		å®šä¹‰ä¸‰è§’å½¢ç±»(Triangle{a,c,b}),
+		è¦æ±‚:
+		a.ä¸¤è¾¹å’Œ > ç¬¬ä¸‰è¾¹ ,æŠ›å‡ºå¼‚å¸¸
+		b.a|b|c > 0 ,æŠ›å‡ºå¼‚å¸¸ 
 	2.Person.setBirthday(year,month,day);
-		a.Äê·İ  : 1970 - 2016
+		a.å¹´ä»½  : 1970 - 2016
 		b.month : 1 - 12 
 		c.day   : 1 - 31
-		d.ÉúÈÕÊÇ·ñÓĞĞ§£¿
+		d.ç”Ÿæ—¥æ˜¯å¦æœ‰æ•ˆï¼Ÿ
 
-	3.dosÃüÁî
+	3.doså‘½ä»¤
 		del
 		rmdir
 		rename
