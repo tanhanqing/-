@@ -1,0 +1,55 @@
+javaBasic
+
+
+#02
+
+classpath
+-------------
+	搜索类的路径
+	javac.exe			  java.exe
+*.java  ----------> .class   ----------> 进程
+
+
+clasapth: . 
+javac.exe -cp HelloWorld.java			//文件名
+javac -cp d:\x\x\xx\x HelloWorld.java
+
+java -cp xx\x\x\xx HelloWorld		//
+
+//
+class HelloWorld{
+	public static void main(String[] args){
+		System.out.println("hello world"); //line 		
+	}
+}
+
+#05
+
+面向对象的特征
+-------------------
+	1.封装
+	2.继承
+	3.多态
+java栈默认是1m，至少是108k，
+
+类成员
+------------
+	1.成员变量
+	2.成员函数
+	3.构造函数
+	4.构造代码块
+	5.静态代码块
+		在类加载过程中调用，而且只调用一次。
+
+
+对象创建过程
+----------------
+	new Dog();
+	1.在内存中分配内存空间。
+	2.对成员变量赋默认值.
+	3.执行构造代码块或赋值语句,执行顺序从上到下。
+	4.构造函数.
+
+内部类的class文件命名是：主类＋$＋内部类名
+匿名类的class文件命名是：主类＋$＋(1,2,3....)
+java提高篇(十)-----详解匿名内部类 https://www.cnblogs.com/chenssy/p/3390871.html
