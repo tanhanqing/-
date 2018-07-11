@@ -75,7 +75,7 @@ Pages
   Data         65.16k                     99.43 %Drty:   4.00
   Misc            374                      0.57
   Latched           0                      0.00
-Reads          78.05M   553.2/s
+Reads          78.05M   553.2/s 
   From file   125.51k     0.9/s            0.16
   Ahead Rnd      1740     0.0/s
   Ahead Sql         7     0.0/s
