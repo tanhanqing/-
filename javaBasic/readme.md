@@ -1,25 +1,7 @@
-Skip to content
- 
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- @tanhanqing
-Sign out
-0
-0 0 tanhanqing/Noteeeeeeeeeeeee
- Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights  Settings
-Noteeeeeeeeeeeee/javaBasic/index.txt
-7f04818  4 minutes ago
-@tanhanqing tanhanqing add summary
-     
-308 lines (216 sloc)  13.5 KB
 javaBasic
 
 
-#02
+ # 02 # 
 
 classpath
 -------------
@@ -41,7 +23,7 @@ class HelloWorld{
 	}
 }
 
-#05
+ # 05 # 
 
 面向对象的特征
 -------------------
@@ -73,7 +55,7 @@ java栈默认是1m，至少是108k，
 java提高篇(十)-----详解匿名内部类 https://www.cnblogs.com/chenssy/p/3390871.html
 
 
-#07
+ # 07 # 
 抽象类和接口
 https://www.cnblogs.com/dolphin0520/p/3811437.html
 
@@ -91,12 +73,12 @@ https://www.cnblogs.com/dolphin0520/p/3811437.html
 　　2）设计层面不同，抽象类作为很多子类的父类，它是一种模板式设计。而接口是一种行为规范，它是一种辐射式设计。什么是模板式设计？最简单例子，大家都用过ppt里面的模板，如果用模板A设计了ppt B和ppt C，ppt B和ppt C公共的部分就是模板A了，如果它们的公共部分需要改动，则只需要改动模板A就可以了，不需要重新对ppt B和ppt C进行改动。而辐射式设计，比如某个电梯都装了某种报警器，一旦要更新报警器，就必须全部更新。也就是说对于抽象类，如果需要添加新的方法，可以直接在抽象类中添加具体的实现，子类可以不进行变更；而对于接口则不行，如果接口进行了变更，则所有实现这个接口的类都必须进行相应的改动。
 
 
-#08
+ # 08 # 
 多态：
 Parent p = new Child();
 
 
-#9
+ # 9 # 
 打jar包方法
 
 堆是存放对象的地方
@@ -115,7 +97,7 @@ daemon		:守护线程.如果应用程序剩余的线程都是守护线程，则�
 通过上述方法可以实现线程间的通讯
 
 
-#10
+ # 10 # 
 多线程
 wait notify
 https://www.cnblogs.com/hapjin/p/5492645.html
@@ -124,7 +106,7 @@ https://www.cnblogs.com/hapjin/p/5492645.html
 
 
 
-#13
+ # 13 # 
 
 常用collection的对比和特点
 
@@ -199,25 +181,29 @@ Hashtable和HashMap它们的性能方面的比较类似 Vector和ArrayList，比
 });  
 
 
-#15
+ # 15 # 
+
 图说设计模式
 http://design-patterns.readthedocs.org/zh_CN/latest/index.html
+如何通俗理解设计模式及其思想?
+https://juejin.im/post/5b3cddb6f265da0f8145c049
 
-#16
+ # 16 # 
+
 字节流 字符流讲解
 *https://blog.csdn.net/nightcurtis/article/details/51324105  
 https://www.cnblogs.com/runningTurtle/p/7088125.html
 
 
-#18 
+ # 18  # 
 socket
 IBM Rose
 
-#19
-#20
+ # 19 # 
+ # 20 # 
 实现简单聊天工具
 
-#21
+ # 21 # 
 JDBC MySql
 表设计原则 https://my.oschina.net/dongzerun/blog/289736
 命名规范 https://my.oschina.net/dongzerun/blog/289664
@@ -226,7 +212,7 @@ JDBC MySql
 
 数据库访问性能优化  索引相关 http://www.cnblogs.com/easypass/archive/2010/12/08/1900127.html
 
-#22
+ # 22 # 
 
 事务性
 ----------------
@@ -250,7 +236,7 @@ jdbc的事务处理
 	conn.rollback(SavePoint sp);	//回滚事务
 
 
-#23
+ # 23 # 
 事务并发的现象&锁
 事务并发执行,三个现象
 ------------
@@ -277,7 +263,7 @@ jdbc的事务处理
 	4.8,serializable,串行，避免了了以上现象。
 
 
-#24
+ # 24 # 
 JVM 
 
 所以堆与栈的区别很明显：
@@ -305,7 +291,7 @@ m.setAccessible(true);
 //等价于obj.setName("tom");
 m.invoke(obj, "t","om");
 
-#25
+ # 25 # 
 内省 针对get/set方法
 //得到bean信息
 BeanInfo bi = Introspector.getBeanInfo(Person.class);
@@ -321,18 +307,5 @@ for(PropertyDescriptor pd : pds){
 	System.out.println(pd.getWriteMethod());
 }
 
-#26
+ # 26 # 
 NIO的本质 是非阻塞
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-API
-Training
-Shop
-Blog
-About
-Press h to open a hovercard with more details.
