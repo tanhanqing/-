@@ -1,0 +1,10 @@
+rem *******************************Code Start*****************************
+@echo off
+set SrcDir=C:\_dbback\db_auto\db_backup
+set "Ymd=%date:~,4%%date:~5,2%%date:~8,2%"
+"C:\Program Files\MySQL\MySQL Server 5.6\bin\"mysqldump --opt -u root --password=密码 -R  数据库名 > %SrcDir%\dbback_%Ymd%.sql
+forfiles /p "%SrcDir%" /s /m *.* /d -60 /c "cmd /c del @path"
+@echo on
+rem *******************************Code End*****************************
+
+*****************复制到backup_db.bat文件，修改目标位置,sql安装位置,密码,需要导出数据库名*******************************
