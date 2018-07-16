@@ -110,7 +110,7 @@ https://www.cnblogs.com/hapjin/p/5492645.html
 
 常用collection的对比和特点
 
- ！[](tanhanqing.github.io/img/note/collection.png)
+![test](https://tanhanqing.github.io/img/note/collection.png)
 
 [Java：集合，Array、Collection(List/Set/Queue)、Map的遍历，比如：ArrayList,LinkedList,HashSet,HashMap](http://www.cnblogs.com/nayitian/archive/2013/03/08/2950730.html)
 
