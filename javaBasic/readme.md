@@ -110,75 +110,77 @@ https://www.cnblogs.com/hapjin/p/5492645.html
 
 常用collection的对比和特点
 
-一般大家都知道ArrayList和LinkedList的大致区别： 
-     1.ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。 
-     2.对于随机访问get和set，ArrayList觉得优于LinkedList，因为LinkedList要移动指针。 
-     3.对于新增和删除操作add和remove，LinedList比较占优势，因为ArrayList要移动数据。 
+ ！[](tanhanqing.github.io/img/note/collection.png)
 
-     ArrayList，Vector主要区别为以下几点： 
-（1）：Vector是线程安全的，源码中有很多的synchronized可以看出，而ArrayList不是。导致Vector效率无法和ArrayList相比； 
-（2）：ArrayList和Vector都采用线性连续存储空间，当存储空间不足的时候，ArrayList默认增加为原来的50%，Vector默认增加为原来的一倍； 
-（3）：Vector可以设置capacityIncrement，而ArrayList不可以，从字面理解就是capacity容量，Increment增加，容量增长的参数。
+	一般大家都知道ArrayList和LinkedList的大致区别： 
+	     1.ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。 
+	     2.对于随机访问get和set，ArrayList觉得优于LinkedList，因为LinkedList要移动指针。 
+	     3.对于新增和删除操作add和remove，LinedList比较占优势，因为ArrayList要移动数据。 
 
-List：1.可以允许重复的对象。
-　　  2.可以插入多个null元素。
-        3.是一个有序容器，保持了每个元素的插入顺序，输出的顺序就是插入的顺序。
-        4.常用的实现类有 ArrayList、LinkedList 和 Vector。ArrayList 最为流行，它提供了使用索引的随意访问，而 LinkedList 则对于经常需要从 List 中添加或删除元素的场合更为合适。
+	     ArrayList，Vector主要区别为以下几点： 
+	（1）：Vector是线程安全的，源码中有很多的synchronized可以看出，而ArrayList不是。导致Vector效率无法和ArrayList相比； 
+	（2）：ArrayList和Vector都采用线性连续存储空间，当存储空间不足的时候，ArrayList默认增加为原来的50%，Vector默认增加为原来的一倍； 
+	（3）：Vector可以设置capacityIncrement，而ArrayList不可以，从字面理解就是capacity容量，Increment增加，容量增长的参数。
 
-Set：1.不允许重复对象
-　　   2. 无序容器，你无法保证每个元素的存储顺序，TreeSet通过 Comparator  或者 Comparable 维护了一个排序顺序。
-        3. 只允许一个 null 元素
-        4.Set 接口最流行的几个实现类是 HashSet、LinkedHashSet 以及 TreeSet。最流行的是基于 HashMap 实现的 HashSet；TreeSet 还实现了 SortedSet 接口，因此 TreeSet 是一个根据其 compare() 和 compareTo() 的定义进行排序的有序容器。
+	List：1.可以允许重复的对象。
+	    2.可以插入多个null元素。
+		3.是一个有序容器，保持了每个元素的插入顺序，输出的顺序就是插入的顺序。
+		4.常用的实现类有 ArrayList、LinkedList 和 Vector。ArrayList 最为流行，它提供了使用索引的随意访问，而 LinkedList 则对于经常需要从 List 中添加或删除元素的场合更为合适。
 
-1.Map不是collection的子接口或者实现类。Map是一个接口。
-2.Map 的 每个 Entry 都持有两个对象，也就是一个键一个值，Map 可能会持有相同的值对象但键对象必须是唯一的。
-3.TreeMap 也通过 Comparator  或者 Comparable 维护了一个排序顺序。
-4.Map 里你可以拥有随意个 null 值但最多只能有一个 null 键。
-5.Map 接口最流行的几个实现类是 HashMap、LinkedHashMap、Hashtable 和 TreeMap。（HashMap、TreeMap最常用）
+	Set：1.不允许重复对象
+	     2. 无序容器，你无法保证每个元素的存储顺序，TreeSet通过 Comparator  或者 Comparable 维护了一个排序顺序。
+		3. 只允许一个 null 元素
+		4.Set 接口最流行的几个实现类是 HashSet、LinkedHashSet 以及 TreeSet。最流行的是基于 HashMap 实现的 HashSet；TreeSet 还实现了 SortedSet 接口，因此 TreeSet 是一个根据其 compare() 和 compareTo() 的定义进行排序的有序容器。
 
-HashMap
-　　HashMap 是一个最常用的Map，它根据键的HashCode 值存储数据，根据键可以直接获取它的值，具有很快的访问速度。遍历时，取得数据的顺序是完全随机的。
-　　HashMap最多只允许一条记录的键为Null；允许多条记录的值为 Null。
-　　HashMap不支持线程的同步（即任一时刻可以有多个线程同时写HashMap），可能会导致数据的不一致。如果需要同步，可以用 Collections的synchronizedMap方法使HashMap具有同步的能力，或者使用ConcurrentHashMap。
-　　Hashtable与 HashMap类似，它继承自Dictionary类。不同的是：它不允许记录的键或者值为空；它支持线程的同步（即任一时刻只有一个线程能写Hashtable），因此也导致了 Hashtable在写入时会比较慢。
+	1.Map不是collection的子接口或者实现类。Map是一个接口。
+	2.Map 的 每个 Entry 都持有两个对象，也就是一个键一个值，Map 可能会持有相同的值对象但键对象必须是唯一的。
+	3.TreeMap 也通过 Comparator  或者 Comparable 维护了一个排序顺序。
+	4.Map 里你可以拥有随意个 null 值但最多只能有一个 null 键。
+	5.Map 接口最流行的几个实现类是 HashMap、LinkedHashMap、Hashtable 和 TreeMap。（HashMap、TreeMap最常用）
 
- 
-
-LinkedHashMap
-　　LinkedHashMap保存了记录的插入顺序，在用Iterator遍历LinkedHashMap时，先得到的记录肯定是先插入的。也可以在构造时带参数，按照应用次数排序。
-在遍历的时候会比HashMap慢，不过有种情况例外：当HashMap容量很大，实际数据较少时，遍历起来可能会比LinkedHashMap慢。因为LinkedHashMap的遍历速度只和实际数据有关，和容量无关，而HashMap的遍历速度和他的容量有关。
-
- 
-
-TreeMap
-　　TreeMap实现SortMap接口，能够把它保存的记录根据键排序。
-　　默认是按键值的升序排序，也可以指定排序的比较器，当用Iterator 遍历TreeMap时，得到的记录是排过序的。
+	HashMap
+	  HashMap 是一个最常用的Map，它根据键的HashCode 值存储数据，根据键可以直接获取它的值，具有很快的访问速度。遍历时，取得数据的顺序是完全随机的。
+	  HashMap最多只允许一条记录的键为Null；允许多条记录的值为 Null。
+	  HashMap不支持线程的同步（即任一时刻可以有多个线程同时写HashMap），可能会导致数据的不一致。如果需要同步，可以用 Collections的synchronizedMap方法使HashMap具有同步的能力，或者使用ConcurrentHashMap。
+	  Hashtable与 HashMap类似，它继承自Dictionary类。不同的是：它不允许记录的键或者值为空；它支持线程的同步（即任一时刻只有一个线程能写Hashtable），因此也导致了 Hashtable在写入时会比较慢。
 
 
 
-
-1. Vector & ArrayList 
-1）Vector的方法都是同步的(Synchronized),是线程安全的(thread-safe)，而ArrayList的方法不是，由于线程的同步必然要影响性能，因此,ArrayList的性能比Vector好。 
-2）当Vector或ArrayList中的元素超过它的初始大小时,Vector会将它的容量翻倍,而ArrayList只增加50%的大小，这样,ArrayList就有利于节约内存空间。
-
-2. Hashtable & HashMap 
-Hashtable和HashMap它们的性能方面的比较类似 Vector和ArrayList，比如Hashtable的方法是同步的,而HashMap的不是。
+	LinkedHashMap
+	  LinkedHashMap保存了记录的插入顺序，在用Iterator遍历LinkedHashMap时，先得到的记录肯定是先插入的。也可以在构造时带参数，按照应用次数排序。
+	在遍历的时候会比HashMap慢，不过有种情况例外：当HashMap容量很大，实际数据较少时，遍历起来可能会比LinkedHashMap慢。因为LinkedHashMap的遍历速度只和实际数据有关，和容量无关，而HashMap的遍历速度和他的容量有关。
 
 
 
-对于PriorityQueue ，观察帮助文档，可以发现，这是jdk1.5以后引入的，
-由此可知，它容量没有界限，且默认排序是自然排序，队头元素是最小元素，故我们可以拿来作为小根堆使用。
-（要注意：默认的PriorityQueue并非保证了整个队列都是有序的，只是保证了队头是最小的）
-对于大根堆，就要借助于comparator比较器，来实现大根堆。（使用默认的初始容量：11）
- PriorityQueue <Integer> maxHeap = new PriorityQueue<Integer>(11, new Comparator<Integer>() {  
-  
-    @Override  
-    public int compare(Integer o1, Integer o2) {  
-        // TODO Auto-generated method stub  
-        return o2.compareTo(o1);  
-    }  
-      
-});  
+	TreeMap
+	  TreeMap实现SortMap接口，能够把它保存的记录根据键排序。
+	  默认是按键值的升序排序，也可以指定排序的比较器，当用Iterator 遍历TreeMap时，得到的记录是排过序的。
+
+
+
+
+	1. Vector & ArrayList 
+	1）Vector的方法都是同步的(Synchronized),是线程安全的(thread-safe)，而ArrayList的方法不是，由于线程的同步必然要影响性能，因此,ArrayList的性能比Vector好。 
+	2）当Vector或ArrayList中的元素超过它的初始大小时,Vector会将它的容量翻倍,而ArrayList只增加50%的大小，这样,ArrayList就有利于节约内存空间。
+
+	2. Hashtable & HashMap 
+	Hashtable和HashMap它们的性能方面的比较类似 Vector和ArrayList，比如Hashtable的方法是同步的,而HashMap的不是。
+
+
+
+	对于PriorityQueue ，观察帮助文档，可以发现，这是jdk1.5以后引入的，
+	由此可知，它容量没有界限，且默认排序是自然排序，队头元素是最小元素，故我们可以拿来作为小根堆使用。
+	（要注意：默认的PriorityQueue并非保证了整个队列都是有序的，只是保证了队头是最小的）
+	对于大根堆，就要借助于comparator比较器，来实现大根堆。（使用默认的初始容量：11）
+	 PriorityQueue <Integer> maxHeap = new PriorityQueue<Integer>(11, new Comparator<Integer>() {  
+
+	    @Override  
+	    public int compare(Integer o1, Integer o2) {  
+		// TODO Auto-generated method stub  
+		return o2.compareTo(o1);  
+	    }  
+
+	});  
 
 
  # 15 # 
