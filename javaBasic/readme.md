@@ -112,6 +112,8 @@ https://www.cnblogs.com/hapjin/p/5492645.html
 
  ！[](tanhanqing.github.io/img/note/collection.png)
 
+[Java：集合，Array、Collection(List/Set/Queue)、Map的遍历，比如：ArrayList,LinkedList,HashSet,HashMap](http://www.cnblogs.com/nayitian/archive/2013/03/08/2950730.html)
+
 	一般大家都知道ArrayList和LinkedList的大致区别： 
 	     1.ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。 
 	     2.对于随机访问get和set，ArrayList觉得优于LinkedList，因为LinkedList要移动指针。 
