@@ -1,0 +1,436 @@
+部署tomcat服务器
+-----------------
+	1.下载apache-tomcat-7.0.70-windows-x64.zip
+	2.解压文件，不要放到中文或者空格目录下。
+	3.进入加压目录.
+		cmd>cd {tomcat_home}/bin
+
+	4.执行命令
+		cmd>startup.bat
+	5.通过浏览器访问页面，查看是否启动成功。
+		http://localhost:8080/
+
+tomcat目录结构
+----------------
+	bin		//执行文件
+	conf	//配置文件目录,server.xml,修改8080.
+
+	webapps	//项目部署目录,项目打成war包，运行期间自行解压。
+	
+	work	//临时目录
+	logs	//日志目录
+
+
+
+
+在idea中开发web项目
+-----------------------
+	1.在idea中配置tomcat服务器
+		settings > applications server -> + --> 定位到tomcat解压目录 ->ok
+	2.创建java模块 + javaEE支持 + maven支持.
+	3.运行web程序
+
+
+配置idea中tomcat热部署
+-------------------------
+	0.关闭tomcat服务器
+	1.run --> edit configuration
+	2.Server选项卡--> VM options部分
+		on "Update" action : update Classes and resources
+		on Frame deactivation : update Classes and resources
+
+	3.启动服务器要选择"debug"模式.
+
+在web模块中添加mvn支持
+-------------------------
+	1.在pom.xml引入springmvc的依赖
+		<?xml version="1.0" encoding="UTF-8"?>
+		<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			<modelVersion>4.0.0</modelVersion>
+
+			<groupId>com.it18zhang</groupId>
+			<artifactId>myspringmvc</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+			</dependencies>
+		</project>
+
+	2.在web/WEB-INF/web.xml文件中配置DispatcherServlet分发器.
+		<?xml version="1.0" encoding="UTF-8"?>
+		<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+				 version="3.1">
+			<!-- 配置分发器Servlet -->
+			<servlet>
+				<servlet-name>dispatcher</servlet-name>
+				<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+			</servlet>
+			<servlet-mapping>
+				<servlet-name>dispatcher</servlet-name>
+				<url-pattern>/</url-pattern>
+			</servlet-mapping>
+		</web-app>
+
+	3.配置springmvc配置文件，使用注解驱动配置项(默认名称就是dispatcher-servlet.xml)
+		[web/WEB-INF/dispatcher-servlet.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xmlns:mvc="http://www.springframework.org/schema/mvc"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/mvc
+								http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+			<!-- 使用注解驱动 -->
+			<mvc:annotation-driven  />
+		</beans>
+	
+	4.编写控制器类
+		[HomeController.java]
+		package com.it18zhang.springmvc.web.controller;
+
+		import org.springframework.stereotype.Controller;
+		import org.springframework.web.bind.annotation.RequestMapping;
+
+		/**
+		 * HomeController
+		 */
+		@Controller
+		public class HomeController {
+
+			/**
+			 * 打开主页
+			 */
+			@RequestMapping("/home")
+			public String openHome(){
+				System.out.println("hello world");
+				return null ;
+			}
+		}
+
+	5.配置dispatcher-servlet.xml文件，增加扫描路径配置。
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xmlns:mvc="http://www.springframework.org/schema/mvc"
+			   xmlns:context="http://www.springframework.org/schema/context"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/mvc
+								http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+								http://www.springframework.org/schema/context
+								http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+			<!-- 配置扫描路径 -->
+			<context:component-scan base-package="com.it18zhang.springmvc.web.controller" />
+			<!-- 使用注解驱动 -->
+			<mvc:annotation-driven  />
+		</beans>
+
+	6.启动程序，访问地址
+		http://localhost:9090/
+
+	
+	7.出现类找不到的原因。
+		idea的web项目默认不会将依赖类库放置到web-inf/lib下，需要手动设置。
+		project structure -> artifacts -> myspringmvc:war exploded -> 选择 output layout选项卡 ->
+		选择右侧的available elements下myspringmvc条目的所有类库 ->右键 -> put into WEB-INF/lib即可。
+	
+	8.运行程序。
+
+	9.配置Spring MVC是视图解析器.
+		[web/WEB-INF/dispatcher-servlet.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xmlns:mvc="http://www.springframework.org/schema/mvc"
+			   xmlns:context="http://www.springframework.org/schema/context"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/mvc
+								http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+								http://www.springframework.org/schema/context
+								http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+			<!-- 配置扫描路径 -->
+			<context:component-scan base-package="com.it18zhang.springmvc.web.controller" />
+			<!-- 使用注解驱动 -->
+			<mvc:annotation-driven  />
+
+			<!-- 内部资源视图解析器 -->
+			<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<property name="prefix" value="/" />
+				<property name="suffix" value=".jsp"/>
+			</bean>
+		</beans>
+
+	10.添加jsp页面和控制代码
+		[HomeController.java]
+		package com.it18zhang.springmvc.web.controller;
+
+		import org.springframework.stereotype.Controller;
+		import org.springframework.web.bind.annotation.RequestMapping;
+
+		/**
+		 * HomeController
+		 */
+		@Controller
+		public class HomeController {
+			/**
+			 * 打开主页
+			 */
+			@RequestMapping("/home")
+			public String openHome(){
+				System.out.println("hello world");
+				return "index";
+			}
+			/**
+			 * 打开主页
+			 */
+			@RequestMapping("/home2")
+			public String home2(){
+				System.out.println("how are you???");
+				return "index2";
+			}
+		}
+
+	11./web/index.jsp + /web/index2.jsp
+		[/web/index2.jsp]
+		<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+		<html>
+		  <head>
+			<title>index2.jsp</title>
+		  </head>
+		  <body>
+			welcome to spring mvc !!!
+		  </body>
+		</html>
+
+html:
+-------------
+	标签类型
+	inline			//行内标签,自己不占一行,和其他标签可以在一行.<br>
+	block			//块标签,自己占一行。
+	
+	<a href="">百度</a>
+
+
+
+模拟注册行为
+----------------
+	1.创建/web/reg.jsp
+		<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+		<html>
+		<head>
+		  <title>reg.jsp</title>
+		</head>
+		<body>
+		<form action="/doReg2" method="post">
+		  UserName : <input type="text" name="username"><br>
+		  Password : <input type="password" name="password"><br>
+		  <input type="submit"/>
+		</form>
+		</body>
+		</html>
+	
+	2'.引入Servlet API类库
+		[pom.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+		<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			<modelVersion>4.0.0</modelVersion>
+
+			<groupId>com.it18zhang</groupId>
+			<artifactId>myspringmvc</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+					<version>2.5</version>
+				</dependency>
+			</dependencies>
+		</project>
+
+	2.创建RegController.java
+		package com.it18zhang.springmvc.web.controller;
+
+		import org.springframework.stereotype.Controller;
+		import org.springframework.web.bind.annotation.RequestMapping;
+		import org.springframework.web.bind.annotation.RequestParam;
+
+		import javax.servlet.http.HttpServletRequest;
+
+		/**
+		 *
+		 */
+		@Controller
+		public class RegController {
+
+			@RequestMapping("/toReg")
+			public String toRegView(){
+				return "reg" ;
+			}
+
+			@RequestMapping("/doReg")
+			public String doReg(@RequestParam("username") String username, @RequestParam("password") String password){
+				System.out.println("插入数据");
+				System.out.println(username + "," + password);
+				return "index" ;
+			}
+
+			@RequestMapping("/doReg2")
+			public String doReg(HttpServletRequest req) {
+				System.out.println("插入数据222");
+				String user = req.getParameter("username");
+				System.out.println(user);
+				return "index";
+			}
+		}
+
+
+引入jstl标签库,jee标准标签库。
+-----------------------------
+	1.添加pom.xml依赖
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+	2.修改jsp页面,声明标签库并使用标签
+		<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+		<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+		<html>
+		<head>
+			<title>reg.jsp</title>
+		</head>
+		<body>
+		<form action='<c:url value="/reg.jsp" />' method="post">
+			UserName : <input type="text" name="username"><br>
+			Password : <input type="password" name="password"><br>
+			<input type="submit"/>
+		</form>
+		</body>
+		</html>
+	3.修改上下文名称
+		project structure --> artifacts --> edit
+	4.
+	5.
+
+
+模拟查询-查询一个User对象
+----------------------
+	1.添加方法
+		class RegController{
+
+			...
+			
+			/*****从请求中提取uid参数******/
+			@RequestMapping("/selectOne")
+			public String selectOne(Model model , @RequestParam("uid") int uid){
+				System.out.println("接受到了参数 : uid = " + uid);
+				String username ="tomson" ;
+				//将数据存放到model中，向jsp传递.
+				model.addAttribute("myusername", username);
+				return "selectOne" ;
+			}
+		}
+
+	2.创建selectOne.jsp
+		[selectOne.jsp]
+		<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+		<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+		<html>
+		<head>
+			<title>selectOne.jsp</title>
+		</head>
+		<body>
+			username : <c:out value="${myusername}" />
+		</body>
+		</html>
+
+	3.打开浏览器输入地址;
+		http://localhost:9090/selectOne?uid=100
+
+
+模拟查询-查询全部信息
+----------------------
+	1.定义User类。
+		public class User {
+			private Integer id;
+			private String name;
+			private int age;
+			...
+			//get/set
+		}
+
+	2.在RegController中添加方法
+		class RegController{
+			...
+		@RequestMapping("/selectAll")
+		public String selectAll(Model m){
+			List<User> list = new ArrayList<User>();
+			for(int i = 1  ; i <= 50 ; i ++){
+				User u = new User();
+				u.setId(i);
+				u.setName("tom" + i);
+				u.setAge(i % 20);
+				list.add(u) ;
+			}
+			//
+			m.addAttribute("allUsers",list);
+			return "userList" ;
+		}
+
+	3.创建userList.jsp
+		<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+		<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+		<html>
+		<head>
+			<title>selectOne.jsp</title>
+		</head>
+		<body>
+			<table border="1px">
+				<tr>
+					<td>ID</td>
+					<td>NAME</td>
+					<td>AGE</td>
+				</tr>
+				<c:forEach items="${allUsers}" var="u">
+					<tr>
+						<td><c:out value="${u.id}"/></td>
+						<td><c:out value="${u.name}"/></td>
+						<td><c:out value="${u.age}"/></td>
+					</tr>
+				</c:forEach>
+			</table>
+		</body>
+		</html>
+
+	4.启动服务器,输入地址
+		http://localhost:9090/selectAll
+
+
+
+forward:
+----------
+	请求转发，在服务器内部完成。客户端不参与，地址栏不改变。
+	而且只能转发到本应用的其他路径上。共享请求参数。
+
+redirect
+--------------
+	重定向，客户端参与，地址栏变，可以重定向到任意url地址。
+	不能共享变量。
