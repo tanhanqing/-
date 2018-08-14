@@ -1,0 +1,442 @@
+mybatis
+----------
+	持久化技术。jdbc
+	sql
+
+Spring	
+----------
+	thq：	最重要的就是线程本地化技术（ThreadLocal）实现事务管理
+		传播行为，通过把对象绑定到当前线程实现事务的传播
+	
+	业务层框架。
+	管理bean的。
+	new 
+	Map<String,Object>
+
+
+体验spring
+------------
+	1.创建模块 ,添加pom.xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			<modelVersion>4.0.0</modelVersion>
+
+			<groupId>com.it18zhang</groupId>
+			<artifactId>springdemo</artifactId>
+			<version>1.0-SNAPSHOT</version>
+
+			<dependencies>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<version>4.11</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+			</dependencies>
+		</project>
+
+	2.创建java类
+		public class WelcomeService {
+			private String message ;
+
+			public String getMessage() {
+				return message;
+			}
+
+			public void setMessage(String message) {
+				this.message = message;
+			}
+			
+			public void sayHello(){
+				System.out.println(message);
+			}
+		}	
+		
+	3.创建配置文件
+		[resources/beans.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+			<bean id="ws" class="com.it18zhang.springdemo.service.WelcomeService">
+				<property name="message" value="hello world" />
+			</bean>
+		</beans>
+
+	4.创建App
+		[App.java]
+		public static void main(String[] args) {
+			//创建容器
+			ApplicationContext ac = new ClassPathXmlApplicationContext("beans.xml");
+			WelcomeService ws = (WelcomeService)ac.getBean("ws");
+			ws.sayHello();
+		}
+
+spring的注解方式使用
+------------------
+	0.增加pom.xml文件
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>4.3.3.RELEASE</version>
+        </dependency>
+
+	1.UserDao增加@Repository注解.
+		
+		@Repository("userDao")
+		public class UserDao{
+			...
+		}
+
+	2.Service增加 @Service注解。
+		@Service("ws")
+		public class WelcomeService {
+			...
+			//注入指定的dao对象
+			@Resource(name = "userDao")
+			public void setDao(UserDao dao) {
+				this.dao = dao;
+			}
+		}
+
+	3.修改beans.xml文件，引入context空间，使用组件扫描。
+		[resrouces/beans.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xmlns:context="http://www.springframework.org/schema/context"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/context
+								http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+			<context:component-scan base-package="com.it18zhang.springdemo.dao,com.it18zhang.springdemo.service" />
+	
+	4.测试App.java
+		public class App {
+			public static void main(String[] args) {
+				//创建容器
+				ApplicationContext ac = new ClassPathXmlApplicationContext("beans.xml");
+				WelcomeService ws = (WelcomeService)ac.getBean("ws");
+				ws.sayHello();
+			}
+		}
+
+
+
+
+
+spring 整合mybatis
+---------------------
+	1.创建模块 pom.xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			<modelVersion>4.0.0</modelVersion>
+
+			<groupId>com.it18zhang</groupId>
+			<artifactId>springmybatisdemo</artifactId>
+			<version>1.0-SNAPSHOT</version>
+
+			<dependencies>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<version>4.11</version>
+				</dependency>
+
+				<dependency>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.17</version>
+				</dependency>
+				<dependency>
+					<groupId>c3p0</groupId>
+					<artifactId>c3p0</artifactId>
+					<version>0.9.1.2</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis-spring</artifactId>
+					<version>1.3.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjweaver</artifactId>
+					<version>1.8.10</version>
+				</dependency>
+			</dependencies>
+		</project>
+
+	2.创建包
+		com.it18zhang.springmybatis.dao
+		com.it18zhang.springmybatis.service
+		com.it18zhang.springmybatis.util
+	3.配置beans.xml
+		[resources/beans.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd">
+			<!-- 数据源 -->
+			<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+				<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+				<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis"/>
+				<property name="user" value="root"/>
+				<property name="password" value="root"/>
+				<property name="maxPoolSize" value="10"/>
+				<property name="minPoolSize" value="2"/>
+				<property name="initialPoolSize" value="3"/>
+				<property name="acquireIncrement" value="2"/>
+			</bean>
+		</beans>
+
+	4.编写单元测试
+		@Test
+		public void testConn() throws Exception {
+			ApplicationContext ac = new ClassPathXmlApplicationContext("beans.xml");
+			DataSource ds = (DataSource)ac.getBean("dataSource");
+			System.out.println(ds.getConnection());
+		}
+
+	5.添加domain类
+		User
+		Order
+		Item
+		略
+
+	6.添加Mapper.xml映射文件
+		//注意：修改类的别名
+		resources/UserMapper.xml
+		resources/OrderMapper.xml
+
+	7.添加mybatis-config.xml
+		[resources/mybatis-config.xml]
+		<?xml version="1.0" encoding="UTF-8" ?>
+		<!DOCTYPE configuration
+				PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-config.dtd">
+		<configuration>
+			<typeAliases>
+				<typeAlias type="com.it18zhang.springmybatis.domain.User" alias="_User"/>
+				<typeAlias type="com.it18zhang.springmybatis.domain.Order" alias="_Order"/>
+				<typeAlias type="com.it18zhang.springmybatis.domain.Item" alias="_Item"/>
+			</typeAliases>
+			<!-- 引入映射文件 -->
+			<mappers>
+				<mapper resource="UserMapper.xml"/>
+				<mapper resource="OrderMapper.xml"/>
+			</mappers>
+		</configuration>
+
+	8.创建Dao接口和实现类.
+		[BaseDao.java]
+		package com.it18zhang.springmybatis.dao;
+
+		import java.util.List;
+
+		/**
+		 *基本Dao接口
+		 */
+		public interface BaseDao<T> {
+			public void insert(T t) ;
+			public void update(T t) ;
+			public void delete(Integer id) ;
+			public T selectOne(Integer id) ;
+			public List<T> selectAll() ;
+		}
+
+		[UserDao.java]
+		package com.it18zhang.springmybatis.dao;
+
+		import com.it18zhang.springmybatis.domain.User;
+		import org.mybatis.spring.support.SqlSessionDaoSupport;
+
+		import java.util.List;
+
+		/**
+		 */
+		@Repository("userDao")
+		public class UserDao extends SqlSessionDaoSupport implements BaseDao<User> {
+
+			public void insert(User user) {
+				getSqlSession().insert("users.insert",user);
+			}
+
+			public void update(User user) {
+				getSqlSession().update("users.update", user);
+			}
+
+			public void delete(Integer id ) {
+				getSqlSession().delete("users.delete", id);
+			}
+
+			public User selectOne(Integer id) {
+				return getSqlSession().selectOne("users.selectOne",id) ;
+			}
+
+			public List<User> selectAll() {
+				return getSqlSession().selectList("users.selectAll");
+			}
+		}
+
+		[OrderDao.java]
+		略
+	
+	9.创建BaseService<T>.java接口 + UserService.java + UserServcieImpl.java
+		[BaseService.java]
+		package com.it18zhang.springmybatis.service;
+
+		import java.util.List;
+
+		/**
+		 * Created by Administrator on 2017/4/7.
+		 */
+		public interface BaseService<T> {
+			public void insert(T t);
+
+			public void update(T t);
+
+			public void delete(Integer id);
+
+			public T selectOne(Integer id);
+
+			public List<T> selectAll();
+		}
+
+		[BaseServiceImpl.java]
+		public abstract class BaseServiceImpl<T> implements BaseService<T> {
+
+			private BaseDao<T> dao ;
+
+			public void setDao(BaseDao<T> dao) {
+				this.dao = dao;
+			}
+
+			public void insert(T t) {
+				dao.insert(t);
+			}
+			...
+		}
+
+		[UserService.java]
+		public interface UserService extends BaseService<User> {
+
+		}
+
+		[UserServiceImpl.java]
+		@Service("userService")
+		public class UserServiceImpl extends BaseServiceImpl<User> implements  UserService{
+			/*** 重写该方法，注入指定的Dao对象 ***/
+			@Resource(name="userDao")
+			public void setDao(BaseDao<User> dao) {
+				super.setDao(dao);
+			}
+		}
+	
+	10.完善spring的配置文件.
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:tx="http://www.springframework.org/schema/tx"
+			   xmlns:aop="http://www.springframework.org/schema/aop"
+			   xmlns:context="http://www.springframework.org/schema/context"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								   http://www.springframework.org/schema/beans/spring-beans.xsd
+								   http://www.springframework.org/schema/context
+								   http://www.springframework.org/schema/context/spring-context-4.3.xsd
+								   http://www.springframework.org/schema/tx
+								   http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+								   http://www.springframework.org/schema/aop
+								   http://www.springframework.org/schema/aop/spring-aop-4.3.xsd" default-autowire="byType">
+			<!-- 配置事务特征 -->
+			<tx:advice id="txAdvice" transaction-manager="txManager">
+				<tx:attributes>
+					<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+				</tx:attributes>
+			</tx:advice>
+
+			<!-- 配置事务切面 -->
+			<aop:config>
+				<aop:advisor advice-ref="txAdvice" pointcut="execution(* *..*Service.*(..))" />
+			</aop:config>
+
+			<!-- 扫描包 -->
+			<context:component-scan base-package="com.it18zhang.springmybatis.dao,com.it18zhang.springmybatis.service" />
+
+			<!-- 数据源 -->
+			<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+				<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+				<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis"/>
+				<property name="user" value="root"/>
+				<property name="password" value="root"/>
+				<property name="maxPoolSize" value="10"/>
+				<property name="minPoolSize" value="2"/>
+				<property name="initialPoolSize" value="3"/>
+				<property name="acquireIncrement" value="2"/>
+			</bean>
+
+			<!-- mybatis整合spring的核心类。 -->
+			<bean id="sf" class="org.mybatis.spring.SqlSessionFactoryBean">
+				<!-- 指定数据源 -->
+				<property name="dataSource" ref="dataSource" />
+				<!-- 指定mybatis配置文件 -->
+				<property name="configLocation" value="mybatis-config.xml"/>
+			</bean>
+
+			<!-- 数据源事务管理器 -->
+			<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+		</beans>
+
+	11.测试UserService
+		@Test
+		public void testUserService() throws Exception {
+			ApplicationContext ac = new ClassPathXmlApplicationContext("beans.xml");
+			UserService us = (UserService)ac.getBean("userService");
+			User u = new User();
+			u.setName("jerry");
+			u.setAge(12);
+			us.insert(u);
+		}
+
+select i.id iid,i.itemname iitemname,o.id oid,o.orderno oorderno , u.id uid ,u.name uname ,u.age uage 
+from items i
+	left outer join orders o on i.oid = o.id 
+	left outer join users u on o.uid = u.id 
+where i.id = 2
