@@ -1,0 +1,408 @@
+session数据访问
+------------------
+	1.java
+		@RequestMapping("/toLogin")
+		public String doLogin() {
+			return "login";
+		}
+
+		@RequestMapping("/doLogin")
+		public String doLogin(User u ,HttpSession s){
+			//将数据存放到session范围。
+			s.setAttribute("user",u);
+			return "index" ;
+		}
+	2.jsp
+		<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+		<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+		<%@ page session="true" %>
+
+		<html>
+		<head>
+			<title>login.jsp</title>
+		</head>
+		<body>
+		<c:out value="${sessionScope.user.name}"/>
+		<c:if test="${sessionScope.user != null}">
+			欢迎 <c:out value="${sessionScope.user.name}"/>
+		</c:if>
+		<c:if test="${sessionScope.user == null}">
+		   您尚未登录,请登录!!
+		</c:if>
+		<c:out value="${sessionScope.user.name}"/>
+
+		<form action='<c:url value="/doLogin" />' method="post">
+			UserName : <input type="text" name="name"><br>
+			Password : <input type="password" name="password"><br>
+			<input type="submit"/>
+		</form>
+		</body>
+		</html>
+
+整合SSM(springmvc + spring + mybatis)
+----------------------------------------
+	1.创建模块
+		ssm(javaee)
+	2.添加maven支持
+	3.添加依赖。
+		mysql驱动
+		c3p0数据源
+		mybatis
+		spring(tx | aop | context))
+		mybatis-spring
+		spring mvc
+		<?xml version="1.0" encoding="UTF-8"?>
+		<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			<modelVersion>4.0.0</modelVersion>
+
+			<groupId>com.it18zhang</groupId>
+			<artifactId>ssm</artifactId>
+			<version>1.0-SNAPSHOT</version>
+
+			<dependencies>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.17</version>
+				</dependency>
+				<dependency>
+					<groupId>c3p0</groupId>
+					<artifactId>c3p0</artifactId>
+					<version>0.9.1.2</version>
+				</dependency>
+				<dependency>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis</artifactId>
+					<version>3.2.1</version>
+				</dependency>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<version>4.11</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+					<version>4.3.3.RELEASE</version>
+				</dependency>
+				<dependency>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis-spring</artifactId>
+					<version>1.3.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.aspectj</groupId>
+					<artifactId>aspectjweaver</artifactId>
+					<version>1.8.10</version>
+				</dependency>
+
+			</dependencies>
+		</project>
+
+	4.创建包
+		com.it18zhang.ssm.dao.impl
+		com.it18zhang.ssm.service.impl
+		com.it18zhang.ssm.domain
+		com.it18zhang.ssm.util
+		com.it18zhang.ssm.web.controller
+
+	5.创建基本类库
+		com.it18zhang.ssm.domain.User
+		com.it18zhang.ssm.domain.Order
+		com.it18zhang.ssm.domain.Item
+		...
+	6.复制beans.xml + mybatis-cconfig.xml+UserMapper.xml + OrderMapper.xml + ItemMapper.xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:tx="http://www.springframework.org/schema/tx"
+			   xmlns:aop="http://www.springframework.org/schema/aop"
+			   xmlns:context="http://www.springframework.org/schema/context"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								   http://www.springframework.org/schema/beans/spring-beans.xsd
+								   http://www.springframework.org/schema/context
+								   http://www.springframework.org/schema/context/spring-context-4.3.xsd
+								   http://www.springframework.org/schema/tx
+								   http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+								   http://www.springframework.org/schema/aop
+								   http://www.springframework.org/schema/aop/spring-aop-4.3.xsd" default-autowire="byType">
+			<!-- 配置事务特征 -->
+			<tx:advice id="txAdvice" transaction-manager="txManager">
+				<tx:attributes>
+					<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+				</tx:attributes>
+			</tx:advice>
+
+			<!-- 配置事务切面 -->
+			<aop:config>
+				<aop:advisor advice-ref="txAdvice" pointcut="execution(* *..*Service.*(..))" />
+			</aop:config>
+
+			<!-- 扫描包 -->
+			<context:component-scan base-package="com.it18zhang.ssm.dao,com.it18zhang.ssm.service" />
+
+			<!-- 数据源 -->
+			<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+				<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+				<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis?user=root&amp;password=root"/>
+				<property name="user" value="root"/>
+				<property name="password" value="root"/>
+				<property name="maxPoolSize" value="10"/>
+				<property name="minPoolSize" value="2"/>
+				<property name="initialPoolSize" value="3"/>
+				<property name="acquireIncrement" value="2"/>
+			</bean>
+
+			<!-- mybatis整合spring的核心类。 -->
+			<bean id="sf" class="org.mybatis.spring.SqlSessionFactoryBean">
+				<!-- 指定数据源 -->
+				<property name="dataSource" ref="dataSource" />
+				<!-- 指定mybatis配置文件 -->
+				<property name="configLocation" value="classpath:mybatis-config.xml"/>
+			</bean>
+
+			<!-- 数据源事务管理器 -->
+			<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+		</beans>
+		...
+
+	7.创建UserController.java
+		package com.it18zhang.ssm.web.controller;
+
+		import com.it18zhang.ssm.domain.User;
+		import com.it18zhang.ssm.service.UserService;
+		import org.springframework.stereotype.Controller;
+		import org.springframework.ui.Model;
+		import org.springframework.web.bind.annotation.RequestMapping;
+
+		import javax.annotation.Resource;
+		import java.util.List;
+
+		/**
+		 *
+		 */
+		@Controller
+		public class UserController {
+
+			@Resource(name="userService")
+			private UserService us ;
+
+			/**
+			 * 查看全部user
+			 */
+			@RequestMapping("/user/findall")
+			public String findAll(Model m ){
+				List<User> list = us.selectAll();
+				m.addAttribute("allUsers",list);
+				return "user/userList" ;
+			}
+		}
+
+	8.编写web.xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+				 version="3.1">
+			<!-- 指定spring的配置文件beans.xml -->
+			<context-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>classpath*:beans.xml</param-value>
+			</context-param>
+			<!-- 确保web服务器启动时，完成spring的容器初始化 -->
+			<listener>
+				<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+			</listener>
+
+			<!-- 配置分发器Servlet -->
+			<servlet>
+				<servlet-name>dispatcher</servlet-name>
+				<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+			</servlet>
+			<servlet-mapping>
+				<servlet-name>dispatcher</servlet-name>
+				<url-pattern>/</url-pattern>
+			</servlet-mapping>
+		</web-app>
+	
+	9.编写WEB-INF/dispatcher-servlet.xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xmlns:mvc="http://www.springframework.org/schema/mvc"
+			   xmlns:context="http://www.springframework.org/schema/context"
+			   xsi:schemaLocation="http://www.springframework.org/schema/beans
+								http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/mvc
+								http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+								http://www.springframework.org/schema/context
+								http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+			<!-- 配置扫描路径 -->
+			<context:component-scan base-package="com.it18zhang.ssm.web.controller" />
+			<!-- 使用注解驱动 -->
+			<mvc:annotation-driven   />
+
+			<!-- 内部资源视图解析器 -->
+			<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<property name="prefix" value="/" />
+				<property name="suffix" value=".jsp"/>
+			</bean>
+		</beans>
+
+spring mvc静态资源部分
+-----------------------
+	1.描述
+		html
+		image
+		css
+		js
+	
+	2.在[dispatcher-servlet.xml]添加如下元素
+		<mvc:resources mapping="/jsssss/**" location="/js/"/>
+		<mvc:resources mapping="/css/**" location="/css/"/>
+		<mvc:resources mapping="/images/**" location="/images/"/>
+		<mvc:resources mapping="/html/**" location="/html/"/>
+
+
+	3.常见相关目录
+		/web/js
+		/web/css
+		/web/images
+		/web/html
+
+	4.放置相应文件
+		/web/html/hello.html
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<title>Hello.html</title>
+		</head>
+		<body>
+			<div>hello</div>
+			<table>
+				<tr>
+					<td>ID</td>
+					<td>name</td>
+					<td>age</td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>tom</td>
+					<td>12</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>tomas</td>
+					<td>13</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>tomasLee</td>
+					<td>4</td>
+				</tr>
+			</table>
+		</body>
+		</html>
+	
+	5.启动程序访问
+		http://localhost:9090/html/hello.html
+
+
+css选择器
+---------------
+	table			//标签选择
+	#id				//id选择
+	.class-name		//类选择
+	tabble td		//后台选择
+
+中文乱码
+--------------------
+	1.jsp页面使用<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>进行utf8码声明。
+
+	2.在web.xml文件中，加入filter。
+		<?xml version="1.0" encoding="UTF-8"?>
+		<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+				 version="3.1">
+			<!-- 指定spring的配置文件beans.xml -->
+			<context-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>classpath*:beans.xml</param-value>
+			</context-param>
+			<!-- 确保web服务器启动时，完成spring的容器初始化 -->
+			<listener>
+				<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+			</listener>
+
+			<filter>
+				<filter-name>characterEncodingFilter</filter-name>
+				<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+				<init-param>
+					<param-name>encoding</param-name>
+					<param-value>UTF-8</param-value>
+				</init-param>
+				<init-param>
+					<param-name>forceEncoding</param-name>
+					<param-value>true</param-value>
+				</init-param>
+			</filter>
+			<filter-mapping>
+				<filter-name>characterEncodingFilter</filter-name>
+				<url-pattern>/*</url-pattern>
+			</filter-mapping>
+
+
+			<!-- 配置分发器Servlet -->
+			<servlet>
+				<servlet-name>dispatcher</servlet-name>
+				<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+			</servlet>
+			<servlet-mapping>
+				<servlet-name>dispatcher</servlet-name>
+				<url-pattern>/</url-pattern>
+			</servlet-mapping>
+		</web-app>
+
+	3.确认mysql使用utf8编码，可以修改mysql的编码.
+		[mysql安装目录/my.ini]
+		uft8
+	4.spring中的数据库连接地址url中显式指定编码.
+		[beans.xml]
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis?user=root&amp;password=root&amp;useUnicode=true&amp;characterEncoding=utf8"/>
+
+unicode : 2		//两个字节
+
+ascii	: 1		//7
+iso8859 : 1		//8
+utf8			//3  
+gbk				//2
+
+
+分页
+-----------------
+	0.技术背景
+		mysql:
+		select * from users limit 10 10
+	1.dao + service
+		
+	2.userList.jsp
+		
+	3.
+	4.
+	5.
