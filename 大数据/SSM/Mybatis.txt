@@ -1,0 +1,702 @@
+SSM
+-----------
+	Spring		//业务层框架
+	Spring MVC	//开发web程序应用的模块model + view + controller
+	Mybatis		//持久化。jdbc , mysql
+
+mybatis
+--------------
+	ibatis.
+	
+体验
+--------------
+	1.创建项目和模块
+	2.添加pom.xml
+		<?xml version="1.0" encoding="UTF-8"?>
+		<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			<modelVersion>4.0.0</modelVersion>
+
+			<groupId>com.it18zhang</groupId>
+			<artifactId>mybatisdemo</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<dependencies>
+				<dependency>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis</artifactId>
+					<version>3.2.1</version>
+				</dependency>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.17</version>
+				</dependency>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<version>4.11</version>
+				</dependency>
+			</dependencies>
+		</project>
+
+	3.添加配置
+		[resoucecs/mybatis-config.xml]
+		<?xml version="1.0" encoding="UTF-8" ?>
+		<!DOCTYPE configuration
+		  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+		  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+		<configuration>
+		  <environments default="development">
+			<environment id="development">
+			  <transactionManager type="JDBC"/>
+			  <dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${username}"/>
+				<property name="password" value="${password}"/>
+			  </dataSource>
+			</environment>
+		  </environments>
+		  <mappers>
+			<mapper resource="org/mybatis/example/BlogMapper.xml"/>
+		  </mappers>
+		</configuration>
+
+	4.创建库和表
+		mysql>create database mybatis ;
+		mysql>use mybatis ;
+		mysql>create table users(id int primary key auto_increment , name varchar(20) ,age int) ;
+		mysql>desc users ;
+
+	5.测试连接
+		package com.it18zhang.mybatisdemo;
+
+		import org.apache.ibatis.io.Resources;
+		import org.apache.ibatis.session.SqlSession;
+		import org.apache.ibatis.session.SqlSessionFactory;
+		import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+		import java.io.IOException;
+		import java.io.InputStream;
+
+		/**
+		 *
+		 */
+		public class App {
+			public static void main(String[] args) {
+				try {
+					//指定配置文件的路径(类路径)
+					String resource = "mybatis-config.xml";
+					//加载文件
+					InputStream inputStream = Resources.getResourceAsStream(resource);
+
+					//创建会话工厂Builder,相当于连接池
+					SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+
+					//通过sf开启会话，相当于打开连接。
+					SqlSession s = sf.openSession();
+					System.out.println(s);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	
+	6.编写mapper文件。
+		a)创建User类，和users对应
+			public class User {
+				private Integer id ;
+				private String name ;
+				private int age ;
+				//get/set
+			}
+
+		b)创建UserMapper.xml,存放在resources/目录下
+			[resources/UserMapper.xml]
+			<?xml version="1.0" encoding="UTF-8" ?>
+			<!DOCTYPE mapper
+					PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+			<!-- 定义名字空间 -->
+			<mapper namespace="users">
+				<!-- 定义insert语句 -->
+				<insert id="insert">
+				  insert into users(name,age) values(#{name},#{age})
+				</insert>
+			</mapper>
+
+	7.在resources/mybatis-config.xml文件中引入mapper的xml文件.
+		[resources/mybatis-config.xml]
+		<?xml version="1.0" encoding="UTF-8" ?>
+		<!DOCTYPE configuration
+				PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-config.dtd">
+		<configuration>
+			<environments default="development">
+				<environment id="development">
+					<transactionManager type="JDBC"/>
+					<dataSource type="POOLED">
+						<property name="driver" value="com.mysql.jdbc.Driver"/>
+						<property name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
+						<property name="username" value="root"/>
+						<property name="password" value="root"/>
+					</dataSource>
+				</environment>
+			</environments>
+			<!-- *****引入映射文件(新增部分)***** -->
+			<mappers>
+				<mapper resource="UserMapper.xml"/>
+			</mappers>
+		</configuration>
+	
+	8.编写单元测试，实现插入.
+		[test/com.it18zhang.mybatis.test.TestCRUD.java]
+		/**
+		 * insert
+		 */
+		@Test
+		public void insert() throws Exception {
+			//指定配置文件的路径(类路径)
+			String resource = "mybatis-config.xml";
+			//加载文件
+			InputStream inputStream = Resources.getResourceAsStream(resource);
+
+			//创建会话工厂Builder,相当于连接池
+			SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+
+			//通过sf开启会话，相当于打开连接。
+			SqlSession s = sf.openSession();
+			User u = new User();
+
+			u.setName("jerry");
+			u.setAge(2);
+			s.insert("users.insert", u);
+			s.commit();
+			s.close();
+		}
+
+	9.完成update-selectOne-selectAll操作。
+		9.1)编写UserMapper.xml，添加相应的元素
+			<?xml version="1.0" encoding="UTF-8" ?>
+			<!DOCTYPE mapper
+					PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+					"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+			<mapper namespace="users">
+				<insert id="insert">
+				  insert into users(name,age) values(#{name},#{age})
+				</insert>
+				<update id="update">
+					update users set name = #{name} , age = #{age} where id = #{id}
+				</update>
+
+				<!-- selectOne -->
+				<select id="selectOne" parameterType="int" resultType="com.it18zhang.mybatisdemo.domain.User">
+					select * from users where id = #{id}
+				</select>
+
+				<!-- selectAll -->
+				<select id="selectAll" resultType="com.it18zhang.mybatisdemo.domain.User">
+					select * from users
+				</select>
+			</mapper>
+			
+		9.2)编写测试程序
+			/**
+			 * Created by Administrator on 2017/4/6.
+			 */
+			public class TestCRUD {
+
+				/**
+				 * insert
+				 */
+				@Test
+				public void insert() throws Exception {
+					//指定配置文件的路径(类路径)
+					String resource = "mybatis-config.xml";
+					//加载文件
+					InputStream inputStream = Resources.getResourceAsStream(resource);
+
+					//创建会话工厂Builder,相当于连接池
+					SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+
+					//通过sf开启会话，相当于打开连接。
+					SqlSession s = sf.openSession();
+					User u = new User();
+
+					u.setName("jerry");
+					u.setAge(2);
+					s.insert("users.insert", u);
+					s.commit();
+					s.close();
+				}
+
+				/**
+				 * update
+				 */
+				@Test
+				public void update() throws Exception {
+					String resource = "mybatis-config.xml";
+					InputStream inputStream = Resources.getResourceAsStream(resource);
+					SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+					SqlSession s = sf.openSession();
+					User u = new User();
+					u.setId(1);
+					u.setName("tomas");
+					u.setAge(32);
+					s.update("users.update", u);
+					s.commit();
+					s.close();
+				}
+
+				/**
+				 * selectOne
+				 */
+				@Test
+				public void selectOne() throws Exception {
+					String resource = "mybatis-config.xml";
+					InputStream inputStream = Resources.getResourceAsStream(resource);
+					SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+					SqlSession s = sf.openSession();
+					User user = s.selectOne("users.selectOne",1);
+					System.out.println(user.getName());
+					s.commit();
+					s.close();
+				}
+
+				/**
+				 * selectOne
+				 */
+				@Test
+				public void selectAll() throws Exception {
+					String resource = "mybatis-config.xml";
+					InputStream inputStream = Resources.getResourceAsStream(resource);
+					SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+					SqlSession s = sf.openSession();
+					List<User> users = s.selectList("users.selectAll");
+					for(User uu : users){
+						System.out.println(uu.getName() + "," + uu.getAge());
+					}
+					s.commit();
+					s.close();
+				}
+			}
+
+
+
+复杂应用
+--------------
+	1.准备数据
+		sql.sql
+
+	2.创建java类.
+		[Order.java]
+		public class Order {
+			private Integer id ;
+			private String orderNo ;
+			//简历关联关系
+			private User user ;
+
+			//get/set
+		}
+
+		[Item.java]
+		public class Item {
+			private Integer id;
+			private String itemName;
+			//订单项和订单之间的关联关系
+			private Order order;
+			//get/set
+		}
+	
+	3.创建Order映射文件
+		[resource/OrderMapper.xml]
+		<?xml version="1.0" encoding="UTF-8" ?>
+		<!DOCTYPE mapper
+				PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="orders">
+			<insert id="insert">
+			  insert into orders(orderno,uid) values(#{orderNo},#{user.id})
+			</insert>
+
+			<!-- findById -->
+			<select id="selectOne" parameterType="int" resultMap="RM_Order">
+			  select
+				o.id oid ,
+				o.orderno oorderno ,
+				o.uid uid ,
+				u.name uname ,
+				u.age uage
+			  from orders o
+				left outer join users u on o.uid = u.id where o.id = #{id}
+			</select>
+			<!-- findAll -->
+			<select id="selectAll" resultMap="RM_Order">
+			  select
+				o.id oid ,
+				o.orderno oorderno ,
+				o.uid uid ,
+				u.name uname ,
+				u.age uage
+			  from orders o
+				left outer join users u on o.uid = u.id
+			</select>
+			<!-- 自定义结果映射 -->
+			<resultMap id="RM_Order" type="com.it18zhang.mybatisdemo.domain.Order">
+				<id property="id" column="oid"/>
+				<result property="orderNo" column="oorderno"/>
+				<association property="user" javaType="com.it18zhang.mybatisdemo.domain.User">
+					<id property="id" column="uid" />
+					<result property="name" column="uname" />
+					<result property="age" column="uage" />
+				</association>
+			</resultMap>
+		</mapper>
+	
+	4.修改配置文件,添加映射。
+		[resource/mybatis-config.xml]
+		<!-- 引入映射文件 -->
+		<mappers>
+			<mapper resource="*Mapper.xml"/>
+		</mappers>
+	
+	5.测试类
+		public class TestOrder {
+
+			/**
+			 * insert
+			 */
+			@Test
+			public void insert() throws Exception {
+				String resource = "mybatis-config.xml";
+				InputStream inputStream = Resources.getResourceAsStream(resource);
+				SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+				SqlSession s = sf.openSession();
+
+				User u = new User();
+				u.setId(2);
+
+				Order o = new Order();
+				o.setOrderNo("No005");
+				o.setUser(u);
+
+				s.insert("orders.insert",o);
+				s.commit();
+				s.close();
+			}
+
+			@Test
+			public void selectOne() throws Exception {
+				String resource = "mybatis-config.xml";
+				InputStream inputStream = Resources.getResourceAsStream(resource);
+				SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+				SqlSession s = sf.openSession();
+				Order order = s.selectOne("orders.selectOne",1);
+				System.out.println(order.getOrderNo());
+				s.commit();
+				s.close();
+			}
+
+			@Test
+			public void selectAll() throws Exception {
+				String resource = "mybatis-config.xml";
+				InputStream inputStream = Resources.getResourceAsStream(resource);
+				SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+				SqlSession s = sf.openSession();
+				List<Order> list = s.selectList("orders.selectAll");
+				for(Order o : list){
+					System.out.println(o.getOrderNo() + " : " + o.getUser().getName());
+				}
+				s.commit();
+				s.close();
+			}
+		}
+
+配置一对多
+------------------
+	1.在User中增加orders集合。
+		public class User {
+			...
+			private List<Order> orders ;
+			//get/set
+		}
+
+	2.改造UserMapper.xml
+
+
+组合多对一和一对多关联关系到一个实体(Order)中
+---------------------------------------------
+	1.关系
+		Order(*) -> (1)User
+		Order(1) -> (*)Item
+
+	2.Order.java
+		class Order{
+			...
+			List<Item> items ;
+			//get/set	
+		}
+	2'.修改配置文件增加别名
+		[resources/mybatis-config.xml]
+		<?xml version="1.0" encoding="UTF-8" ?>
+		<!DOCTYPE configuration
+				PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-config.dtd">
+		<configuration>
+			<typeAliases>
+				<typeAlias type="com.it18zhang.mybatisdemo.domain.User" alias="_User"/>
+				<typeAlias type="com.it18zhang.mybatisdemo.domain.Order" alias="_Order"/>
+				<typeAlias type="com.it18zhang.mybatisdemo.domain.Item" alias="_Item"/>
+			</typeAliases>
+			<environments default="development">
+				<environment id="development">
+					<transactionManager type="JDBC"/>
+					<dataSource type="POOLED">
+						<property name="driver" value="com.mysql.jdbc.Driver"/>
+						<property name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
+						<property name="username" value="root"/>
+						<property name="password" value="root"/>
+					</dataSource>
+				</environment>
+			</environments>
+			<!-- 引入映射文件 -->
+			<mappers>
+				<mapper resource="UserMapper.xml"/>
+				<mapper resource="OrderMapper.xml"/>
+			</mappers>
+		</configuration>
+		
+	3.OrderMapper.xml
+		<?xml version="1.0" encoding="UTF-8" ?>
+		<!DOCTYPE mapper
+				PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="orders">
+			<insert id="insert">
+			  insert into orders(orderno,uid) values(#{orderNo},#{user.id})
+			</insert>
+
+			<!-- findById -->
+			<select id="selectOne" parameterType="int" resultMap="RM_Order">
+			  select
+				o.id      oid ,
+				o.orderno oorderno ,
+				o.uid     uid ,
+				u.name    uname ,
+				u.age     uage ,
+				i.id      iid,
+				i.itemname iitemname
+			  from orders o
+				left outer join users u on o.uid = u.id
+				left outer join items i on o.id = i.oid
+			  where o.id = #{id}
+			</select>
+			<!-- findAll -->
+			<select id="selectAll" resultMap="RM_Order">
+			  select
+				o.id      oid ,
+				o.orderno oorderno ,
+				o.uid     uid ,
+				u.name    uname ,
+				u.age     uage ,
+				i.id      iid,
+				i.itemname iitemname
+			  from orders o
+				left outer join users u on o.uid = u.id
+				left outer join items i on o.id = i.oid
+			</select>
+			<!-- 自定义结果映射 -->
+			<resultMap id="RM_Order" type="com.it18zhang.mybatisdemo.domain.Order">
+				<id property="id" column="oid"/>
+				<result property="orderNo" column="oorderno"/>
+				<association property="user" javaType="com.it18zhang.mybatisdemo.domain.User">
+					<id property="id" column="uid" />
+					<result property="name" column="uname" />
+					<result property="age" column="uage" />
+				</association>
+				<collection property="items" ofType="_Item">
+					<id property="id" column="iid" />
+					<result property="itemName" column="iitemname" />
+				</collection>
+			</resultMap>
+		</mapper>
+
+	4.测试
+		@Test
+		public void selectOne() throws Exception {
+			String resource = "mybatis-config.xml";
+			InputStream inputStream = Resources.getResourceAsStream(resource);
+			SqlSessionFactory sf = new SqlSessionFactoryBuilder().build(inputStream);
+			SqlSession s = sf.openSession();
+			Order order = s.selectOne("orders.selectOne",1);
+			System.out.println(order.getOrderNo() + order.getUser().getName());
+			for(Item i : order.getItems()){
+				System.out.println(i.getId() + ":" + i.getItemName());
+			}
+			s.commit();
+			s.close();
+		}
+
+
+改造项目
+----------------
+	1.引入Util类
+		package com.it18zhang.mybatisdemo.util;
+
+		import org.apache.ibatis.io.Resources;
+		import org.apache.ibatis.session.SqlSession;
+		import org.apache.ibatis.session.SqlSessionFactory;
+		import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+		import java.io.InputStream;
+
+		/**
+		 * 工具类
+		 */
+		public class Util {
+			//
+			private static SqlSessionFactory sf ;
+
+			static{
+				try {
+					String resource = "mybatis-config.xml";
+					InputStream inputStream = Resources.getResourceAsStream(resource);
+					sf = new SqlSessionFactoryBuilder().build(inputStream);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			/**
+			 * 开启会话
+			 */
+			public static SqlSession openSession(){
+				return sf.openSession() ;
+			}
+
+			/**
+			 * 关闭会话
+			 */
+			public static void closeSession(SqlSession s){
+				if(s != null){
+					s.close();
+				}
+			}
+
+
+			/**
+			 * 关闭会话
+			 */
+			public static void rollbackTx(SqlSession s) {
+				if (s != null) {
+					s.rollback();
+				}
+			}
+		}
+
+	2.设计模板类DaoTemplate和回调MybatisCallback接口
+		[DaoTemplate.java]
+		package com.it18zhang.mybatisdemo.dao;
+
+		import com.it18zhang.mybatisdemo.util.Util;
+		import org.apache.ibatis.session.SqlSession;
+
+		/**
+		 * 模板类
+		 */
+		public class DaoTemplate {
+			/**
+			 * 执行
+			 */
+			public static Object execute(MybatisCallback cb){
+				SqlSession s = null;
+				try {
+					s = Util.openSession();
+					Object ret = cb.doInMybatis(s);
+					s.commit();
+					return ret ;
+				} catch (Exception e) {
+					Util.rollbackTx(s);
+				} finally {
+					Util.closeSession(s);
+				}
+				return null ;
+			}
+		}
+
+		[MybatisCallback.java]
+		package com.it18zhang.mybatisdemo.dao;
+
+		import org.apache.ibatis.session.SqlSession;
+
+		/**
+		 * 回调接口
+		 */
+		public interface MybatisCallback {
+			public Object doInMybatis(SqlSession s);
+		}
+
+	3.通过模板类+回调接口实现UserDao.java
+		[UserDao.java]
+		package com.it18zhang.mybatisdemo.dao;
+
+		import com.it18zhang.mybatisdemo.domain.User;
+		import com.it18zhang.mybatisdemo.util.Util;
+		import org.apache.ibatis.session.SqlSession;
+
+		import java.util.List;
+
+		/**
+		 * UserDao
+		 */
+		public class UserDao {
+
+			/**
+			 * 插入操作
+			 */
+			public void insert(final User user){
+				DaoTemplate.execute(new MybatisCallback() {
+					public Object doInMybatis(SqlSession s) {
+						s.insert("users.insert",user);
+						return null ;
+					}
+				});
+			}
+
+			/**
+			 * 插入操作
+			 */
+			public void update(final User user){
+				DaoTemplate.execute(new MybatisCallback() {
+					public Object doInMybatis(SqlSession s) {
+						s.update("users.update", user);
+						return null ;
+					}
+				});
+			}
+
+			public User selctOne(final Integer id){
+				return (User)DaoTemplate.execute(new MybatisCallback() {
+					public Object doInMybatis(SqlSession s) {
+						return s.selectOne("users.selectOne",id);
+					}
+				});
+			}
+
+			public List<User> selctAll(){
+				return (List<User>)DaoTemplate.execute(new MybatisCallback() {
+					public Object doInMybatis(SqlSession s) {
+						return s.selectList("users.selectAll");
+					}
+				});
+			}
+		}
+
+	4.App测试
+		public static void main(String[] args) {
+			UserDao dao = new UserDao();
+			User u = dao.selctOne(1);
+			System.out.println(u.getName());
+		}
